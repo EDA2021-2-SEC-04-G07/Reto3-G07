@@ -37,9 +37,21 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Contar los avistamientos en una ciudad")
+    print("3- Contar los avistamientos por duración")
+    print("4- Contar los avistamientos por Hora/Minutos del día")
+    print("5- Contar los avistamientos en un rango de fechas")
+    print("6- Contar los avistamientos de una zona geográfica")
+    print("7- Visualiizar los avistamientos de una zona geográfica")
+    
+catalogo = None
 
-catalog = None
+
+def cargarDatos(catalogo, datos):
+    controller.cargarDatos(catalogo, datos)
+    
+
+archivo_datos = 'UFOS-utf8-small.csv'
 
 """
 Menu principal
@@ -49,8 +61,28 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        
+        catalogo = controller.initCatalogo()
+        cargarDatos(catalogo, archivo_datos)
+        print('f')
 
     elif int(inputs[0]) == 2:
+        print('Altura del árbol: ', controller.alturaArbol(catalogo['ciudades']))
+        print('Elementos en el árbol: ', controller.elementosArbol(catalogo['ciudades']))
+    
+    elif int(inputs[0]) == 3:
+        pass
+    
+    elif int(inputs[0]) == 4:
+        pass
+    
+    elif int(inputs[0]) == 5:
+        pass
+    
+    elif int(inputs[0]) == 6:
+        pass
+    
+    elif int(inputs[0]) == 7:
         pass
 
     else:
