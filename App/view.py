@@ -64,7 +64,6 @@ while True:
         
         catalogo = controller.initCatalogo()
         cargarDatos(catalogo, archivo_datos)
-        print('f')
 
     elif int(inputs[0]) == 2:
         print('Altura del árbol: ', controller.alturaArbol(catalogo['ciudades']))

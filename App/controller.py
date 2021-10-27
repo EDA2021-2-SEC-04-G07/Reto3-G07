@@ -42,12 +42,9 @@ def cargarDatos(catalogo, datos):
     archivo_datos = csv.DictReader(open(datos, encoding="utf-8"),
                                 delimiter=",")
     
-    cont = 0
-    
     for dato in archivo_datos:
-        cont += 1
-        print(cont)
         model.agregarDato(catalogo, dato)
+
         
 
 # Funciones de ordenamiento
