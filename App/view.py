@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from datetime import date, time, datetime
 assert cf
 
 
@@ -64,11 +65,43 @@ while True:
         
         catalogo = controller.initCatalogo()
         cargarDatos(catalogo, archivo_datos)
-        print('f')
+        
 
     elif int(inputs[0]) == 2:
+        
+        #Lab 8
         print('Altura del árbol: ', controller.alturaArbol(catalogo['ciudades']))
         print('Elementos en el árbol: ', controller.elementosArbol(catalogo['ciudades']))
+        
+        #Req 1
+        
+        ciudad = input('Contar los avistamientos en la ciudad de: ')
+        
+        info_ciudad = controller.infoCiudad(catalogo, ciudad)
+        info_ciudad_ordenada = controller.llamarMerge(info_ciudad, identificador=1)
+        primeros3 = lt.subList(info_ciudad_ordenada, 1, 3)
+        ultimos3 = lt.subList(info_ciudad_ordenada, lt.size(info_ciudad_ordenada)-2, 3)
+        cantidad_ciudades = controller.elementosArbol(catalogo['ciudades'])
+        avistamientos_ciudad_ordenados = controller.llamarMerge(catalogo['avistamientos'], identificador = 2)
+        top_5_avistamientos = lt.subList(avistamientos_ciudad_ordenados, 1, 5)
+        
+        print('Existen {} ciudades diferentes con avistamientos'.format(cantidad_ciudades))
+        print('El top 5 de ciudades con más avistamientos es: \n')
+        print('   Ciudad    |    Número de avistamientos\n')
+        
+        for i in lt.iterator(top_5_avistamientos):
+            print('  {}            {}'.format(i['ciudad'], i['num_avistamientos']))
+        
+        print('==================================================\n')
+        print('Hay {} avistamientos en la ciudad: {}'.format(lt.size(info_ciudad_ordenada), ciudad))
+        print('Los primeros y los últimos 3 avistamientos en la ciudad son: \n')
+        print('    Fecha y hora    |    Ciudad    |    Estado    |    País    |    Forma    |    Duración (segundos)')
+        
+        for i in lt.iterator(primeros3):
+            print('{}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos']))
+        for i in lt.iterator(ultimos3):
+            print('{}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos']))
+                    
     
     elif int(inputs[0]) == 3:
         pass

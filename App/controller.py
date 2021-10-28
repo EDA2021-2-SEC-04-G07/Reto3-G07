@@ -42,15 +42,29 @@ def cargarDatos(catalogo, datos):
     archivo_datos = csv.DictReader(open(datos, encoding="utf-8"),
                                 delimiter=",")
     
-    cont = 0
-    
     for dato in archivo_datos:
-        cont += 1
-        print(cont)
         model.agregarDato(catalogo, dato)
+        
+    model.agregarAvistamientos(catalogo)
         
 
 # Funciones de ordenamiento
+
+def llamarInsertion(datos, identificador):
+    resultado = model.insertion(datos, identificador)
+    return resultado
+
+def llamarShell(datos, identificador):
+    resultado = model.shell(datos, identificador)
+    return resultado
+
+def llamarMerge(datos, identificador):
+    resultado = model.merge(datos, identificador)
+    return resultado
+
+def llamarQuicksort(datos, identificador):
+    resultado = model.quicksort(datos, identificador)
+    return resultado
 
 # Funciones de consulta sobre el catálogo
 
@@ -60,3 +74,7 @@ def alturaArbol(catalogo):
 
 def elementosArbol(catalogo):
     return model.elementosArbol(catalogo)
+
+
+def infoCiudad(catalogo, ciudad):
+    return model.infoCiudad(catalogo, ciudad)
