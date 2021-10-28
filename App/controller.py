@@ -44,6 +44,7 @@ def cargarDatos(catalogo, datos):
     
     for dato in archivo_datos:
         model.agregarDato(catalogo, dato)
+
         
     model.agregarAvistamientos(catalogo)
         
