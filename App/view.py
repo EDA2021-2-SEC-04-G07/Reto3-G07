@@ -83,10 +83,14 @@ while True:
         primeros3 = lt.subList(info_ciudad_ordenada, 1, 3)
         ultimos3 = lt.subList(info_ciudad_ordenada, lt.size(info_ciudad_ordenada)-2, 3)
         cantidad_ciudades = controller.elementosArbol(catalogo['ciudades'])
-        #avistamientos_ciudad_ordenados = controller.llamarMerge(catalogo['avistamientos'], identificador = 2)
+        avistamientos_ciudad_ordenados = controller.llamarMerge(catalogo['avistamientos'], identificador = 2)
+        ciudad_mayor = lt.firstElement(avistamientos_ciudad_ordenados)
         #top_5_avistamientos = lt.subList(avistamientos_ciudad_ordenados, 1, 5)
-        
-        #print('Existen {} ciudades diferentes con avistamientos'.format(cantidad_ciudades))
+        print('=====================================\n')
+        print('Existen {} ciudades diferentes con avistamientos\n'.format(cantidad_ciudades))
+        print('La ciudad con más avistamientos es: \n')
+        print('    Ciudad    |    Número de avistamientos\n')
+        print('{}     {}'.format(ciudad_mayor['ciudad'], ciudad_mayor['num_avistamientos']))
         #print('El top 5 de ciudades con más avistamientos es: \n')
         #print('   Ciudad    |    Número de avistamientos\n')
         
@@ -128,7 +132,7 @@ while True:
         primerElemento = lt.lastElement(ultimos3)
         info_primer_elemento = controller.infoMap(catalogo['avistamientos_por_hora'], primerElemento['tiempo_hora'])
          
-        print('Existen {} avistamientos con diferentes tiempos'.format(controller.elementosArbol(catalogo['avistamientos_por_hora'])))
+        print('Existen {} avistamientos con diferentes tiempos\n'.format(controller.elementosArbol(catalogo['avistamientos_por_hora'])))
         print('El avistamiento más tardío es: \n')
         print('    Hora    |    Cantidad    \n')
         print('{}     {}\n'.format(primerElemento['tiempo_hora'], lt.size(info_primer_elemento)))
