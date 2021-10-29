@@ -79,3 +79,15 @@ def elementosArbol(catalogo):
 
 def infoCiudad(catalogo, ciudad):
     return model.infoCiudad(catalogo, ciudad)
+
+
+def rangoLLaves(catalogo, hora_inicial, hora_final):
+    return model.rangoLLaves(catalogo, hora_inicial, hora_final)
+
+
+def infoMap(catalogo, i):
+    return model.infoMap(catalogo, i)
+
+
+def infoPrimerElemento(primerElemento):
+    return model.infoPrimerElemento(primerElemento)

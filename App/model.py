@@ -54,13 +54,15 @@ def initCatalogo():
     catalogo = {'datos':None,
                 'ciudades': None,
                 'fechas': None,
-                'avistamientos': None
+                'avistamientos': None,
+                'avistamientos_por_hora': None
                 }
     
     catalogo['datos'] = lt.newList(datastructure='ARRAY_LIST')
     catalogo['ciudades'] = om.newMap(omaptype='RBT')
     catalogo['fechas'] = om.newMap(omaptype='RBT')
     catalogo['avistamientos'] = lt.newList(datastructure='ARRAYLIST')
+    catalogo['avistamientos_por_hora'] = om.newMap(omaptype='RBT')
     
     return catalogo
     
@@ -74,14 +76,20 @@ def agregarDato(catalogo, dato):
     lt.addLast(catalogo['datos'], dato)
     agregarCiudad(catalogo['ciudades'], dato)
     agregarFechas(catalogo['fechas'], dato)
+    agregarHoraAvistamiento(catalogo['avistamientos_por_hora'], dato)
     
     
 def nuevoDato(dato):
+    
+    tiempo = dato['datetime']
+    lista_hora = tiempo.split(' ')
+    hora = lista_hora[1]
     
     nuevoDato = {'tiempo': dato['datetime'],
             'ciudad': dato['city'],
             'estado': dato['state'],
             'pais': dato['country'],
+            'tiempo_hora': hora,
             'forma': dato['shape'],
             'duracion_segundos': dato['duration (seconds)'],
             'duracion_horas/minutos': dato['duration (hours/min)'], 
@@ -127,6 +135,22 @@ def agregarFechas(catalogo, dato):
         om.put(catalogo, dato['tiempo'], lista_fechas)
         
         
+def agregarHoraAvistamiento(catalogo, dato):
+    
+    hora = dato['tiempo_hora']
+    existe = om.contains(catalogo, hora)
+    
+    if existe:
+        entry_horas = om.get(catalogo, hora)
+        lista_horas = me.getValue(entry_horas)
+        lt.addLast(lista_horas, dato)
+        
+    else:
+        lista_horas = lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(lista_horas, dato)
+        om.put(catalogo, hora, lista_horas)
+    
+        
 def agregarAvistamientos(catalogo):
     
     lista = catalogo['avistamientos']
@@ -162,6 +186,18 @@ def infoCiudad(catalogo, ciudad):
     
     return info_ciudad
 
+
+def rangoLLaves(catalogo, hora_inicial, hora_final):
+    return om.keys(catalogo, hora_inicial, hora_final)
+
+
+def infoMap(catalogo, i):
+    
+    entry = om.get(catalogo, i)
+    info = me.getValue(entry)
+    return info
+
+
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def cmpFechaAvistamiento(fecha1, fecha2):
@@ -195,6 +231,25 @@ def cmpNumAvistamiento(av1, av2):
         return False
     
     
+def cmpHoraAvistamiento(h1, h2):
+    
+    h1_final = h1['tiempo_hora']
+    h2_final = h2['tiempo_hora']
+    
+    if h1_final < h2_final:
+        return True
+    elif h1_final == h2_final:
+        
+        fecha1 = h1['tiempo']
+        fecha2 = h2['tiempo']
+        
+        return cmpFechaAvistamientoPrueba(fecha1, fecha2)
+    
+    else: 
+        return False
+    
+    
+    
 
 # Funciones de ordenamiento
 
@@ -204,6 +259,8 @@ def insertion(datos, identificador):
         lista_ordenada = ist.sort(datos, cmpFechaAvistamiento)
     elif identificador == 2:
         lista_ordenada = ist.sort(datos, cmpNumAvistamiento)
+    elif identificador == 3:
+        lista_ordenada = ist.sort(datos, cmpHoraAvistamiento)
     
     return lista_ordenada
 
@@ -213,6 +270,8 @@ def shell(datos, identificador):
         lista_ordenada = sst.sort(datos, cmpFechaAvistamiento)
     elif identificador == 2:
         lista_ordenada = sst.sort(datos, cmpNumAvistamiento)
+    elif identificador == 3:
+        lista_ordenada = sst.sort(datos, cmpHoraAvistamiento)
     
     return lista_ordenada
 
@@ -222,6 +281,8 @@ def merge(datos, identificador):
         lista_ordenada = mst.sort(datos, cmpFechaAvistamiento)
     elif identificador == 2:
         lista_ordenada = mst.sort(datos, cmpNumAvistamiento)
+    elif identificador == 3:
+        lista_ordenada = mst.sort(datos, cmpHoraAvistamiento)
         
     
     return lista_ordenada
@@ -232,5 +293,7 @@ def quicksort(datos, identificador):
         lista_ordenada = qst.sort(datos, cmpFechaAvistamiento)
     elif identificador == 2:
         lista_ordenada = qst.sort(datos, cmpNumAvistamiento)
+    elif identificador == 3:
+        lista_ordenada = qst.sort(datos, cmpHoraAvistamiento)
 
     return lista_ordenada

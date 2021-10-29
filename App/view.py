@@ -65,6 +65,7 @@ while True:
         
         catalogo = controller.initCatalogo()
         cargarDatos(catalogo, archivo_datos)
+        print('2')
         
 
     elif int(inputs[0]) == 2:
@@ -82,15 +83,15 @@ while True:
         primeros3 = lt.subList(info_ciudad_ordenada, 1, 3)
         ultimos3 = lt.subList(info_ciudad_ordenada, lt.size(info_ciudad_ordenada)-2, 3)
         cantidad_ciudades = controller.elementosArbol(catalogo['ciudades'])
-        avistamientos_ciudad_ordenados = controller.llamarMerge(catalogo['avistamientos'], identificador = 2)
-        top_5_avistamientos = lt.subList(avistamientos_ciudad_ordenados, 1, 5)
+        #avistamientos_ciudad_ordenados = controller.llamarMerge(catalogo['avistamientos'], identificador = 2)
+        #top_5_avistamientos = lt.subList(avistamientos_ciudad_ordenados, 1, 5)
         
-        print('Existen {} ciudades diferentes con avistamientos'.format(cantidad_ciudades))
-        print('El top 5 de ciudades con más avistamientos es: \n')
-        print('   Ciudad    |    Número de avistamientos\n')
+        #print('Existen {} ciudades diferentes con avistamientos'.format(cantidad_ciudades))
+        #print('El top 5 de ciudades con más avistamientos es: \n')
+        #print('   Ciudad    |    Número de avistamientos\n')
         
-        for i in lt.iterator(top_5_avistamientos):
-            print('  {}            {}'.format(i['ciudad'], i['num_avistamientos']))
+        #for i in lt.iterator(top_5_avistamientos):
+            #print('  {}            {}'.format(i['ciudad'], i['num_avistamientos']))
         
         print('==================================================\n')
         print('Hay {} avistamientos en la ciudad: {}'.format(lt.size(info_ciudad_ordenada), ciudad))
@@ -107,7 +108,42 @@ while True:
         pass
     
     elif int(inputs[0]) == 4:
-        pass
+        
+        hora_inicial = input('Digite la hora inicial: ')
+        hora_final = input('Digite la hora final: ')
+        
+        rango_horas = controller.rangoLLaves(catalogo['avistamientos_por_hora'], hora_inicial, hora_final)
+        info_horas = lt.newList(datastructure='ARRAY_LIST')
+        print('2')
+        
+        for i in lt.iterator(rango_horas):
+            info = controller.infoMap(catalogo['avistamientos_por_hora'], i)
+            
+            for j in lt.iterator(info):
+                lt.addLast(info_horas, j)
+            
+        info_hora_ordenada = controller.llamarMerge(info_horas, identificador=3)
+        primeros3 = lt.subList(info_hora_ordenada, 1, 3)
+        ultimos3 = lt.subList(info_hora_ordenada, lt.size(info_hora_ordenada)-2, 3)
+        primerElemento = lt.lastElement(ultimos3)
+        info_primer_elemento = controller.infoMap(catalogo['avistamientos_por_hora'], primerElemento['tiempo_hora'])
+         
+        print('Existen {} avistamientos con diferentes tiempos'.format(controller.elementosArbol(catalogo['avistamientos_por_hora'])))
+        print('El avistamiento más tardío es: \n')
+        print('    Hora    |    Cantidad    \n')
+        print('{}     {}\n'.format(primerElemento['tiempo_hora'], lt.size(info_primer_elemento)))
+        print('Existen {} avistamientos entre {} y {} \n'.format(lt.size(info_horas), hora_inicial, hora_final))
+        print('    Fecha y hora    |    Hora    |    Ciudad    |    Estado    |    País    |    Forma    |    Duración    ')
+        print('===========================================================================================================')
+        
+        for i in lt.iterator(primeros3):
+            print('{}    {}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['tiempo_hora'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos']))
+            
+        for i in lt.iterator(ultimos3):
+            print('{}    {}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['tiempo_hora'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos']))
+            
+            
+        
     
     elif int(inputs[0]) == 5:
         pass
