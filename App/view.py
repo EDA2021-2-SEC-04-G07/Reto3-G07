@@ -47,7 +47,7 @@ def printMenu():
     print("4- Contar los avistamientos por Hora/Minutos del día")
     print("5- Contar los avistamientos en un rango de fechas")
     print("6- Contar los avistamientos de una zona geográfica")
-    print("7- Visualiizar los avistamientos de una zona geográfica")
+    print("7- Visualizar los avistamientos de una zona geográfica")
     
 catalogo = None
 
