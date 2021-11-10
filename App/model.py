@@ -30,7 +30,6 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
-#from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import insertionsort as ist
 from DISClib.Algorithms.Sorting import mergesort as mst
 from DISClib.Algorithms.Sorting import quicksort as qst
@@ -55,7 +54,9 @@ def initCatalogo():
                 'ciudades': None,
                 'fechas': None,
                 'avistamientos': None,
-                'avistamientos_por_hora': None
+                'avistamientos_por_hora': None,
+                'duracion_segundos': None,
+                'longitud': None
                 }
     
     catalogo['datos'] = lt.newList(datastructure='ARRAY_LIST')
@@ -63,6 +64,8 @@ def initCatalogo():
     catalogo['fechas'] = om.newMap(omaptype='RBT')
     catalogo['avistamientos'] = lt.newList(datastructure='ARRAYLIST')
     catalogo['avistamientos_por_hora'] = om.newMap(omaptype='RBT')
+    catalogo['duracion_segundos'] = om.newMap(omaptype='RBT')
+    catalogo['longitud'] = om.newMap(omaptype='RBT')
     
     return catalogo
     
@@ -77,6 +80,8 @@ def agregarDato(catalogo, dato):
     agregarCiudad(catalogo['ciudades'], dato)
     agregarFechas(catalogo['fechas'], dato)
     agregarHoraAvistamiento(catalogo['avistamientos_por_hora'], dato)
+    agregarDuracion(catalogo['duracion_segundos'], dato)
+    agregarLongitud(catalogo['longitud'],dato)
     
     
 def nuevoDato(dato):
@@ -98,7 +103,36 @@ def nuevoDato(dato):
             }
     
     return nuevoDato
+
+def agregarDuracion(catalogo, dato):
+    existe = om.contains(catalogo, float(dato['duracion_segundos']))
+
+    if existe:        
+        entry = om.get(catalogo, float(dato['duracion_segundos']))
+        lista = me.getValue(entry)
+        lt.addLast(lista, dato)
+        
+    else:
+        lista = lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(lista, dato)
+        om.put(catalogo, float(dato['duracion_segundos']), lista)
     
+def agregarLongitud(catalogo, dato):
+    longitud = round(float(dato['longitud']), 2)
+    latitud = round(float(dato['latitud']), 2)
+    dato['latitud'] = latitud
+    dato['longitud'] = longitud
+    existe = om.contains(catalogo, longitud)
+
+    if existe:
+        entry = om.get(catalogo, longitud)
+        lista = me.getValue(entry)
+        lt.addLast(lista, dato)
+
+    else:
+        lista = lt.newList(datastructure='ARRAY_LIST')
+        lt.addLast(lista, dato)
+        om.put(catalogo, longitud, lista)
     
 def agregarCiudad(catalogo, dato):
     
@@ -121,18 +155,19 @@ def agregarCiudad(catalogo, dato):
         
         
 def agregarFechas(catalogo, dato):
-    
-    existe = om.contains(catalogo, dato['tiempo'])
+    fecha = dato['tiempo'].split()
+
+    existe = om.contains(catalogo, fecha[0])
     
     if existe:
-        entry_fechas = om.get(catalogo, dato['tiempo'])
+        entry_fechas = om.get(catalogo, fecha[0])
         lista_fechas = me.getValue(entry_fechas)
         lt.addLast(lista_fechas, dato)
         
     else:
         lista_fechas = lt.newList(datastructure='ARRAY_LIST')
         lt.addLast(lista_fechas, dato)
-        om.put(catalogo, dato['tiempo'], lista_fechas)
+        om.put(catalogo, fecha[0], lista_fechas)
         
         
 def agregarHoraAvistamiento(catalogo, dato):
@@ -186,7 +221,6 @@ def infoCiudad(catalogo, ciudad):
     
     return info_ciudad
 
-
 def rangoLLaves(catalogo, hora_inicial, hora_final):
     return om.keys(catalogo, hora_inicial, hora_final)
 
@@ -196,6 +230,29 @@ def infoMap(catalogo, i):
     entry = om.get(catalogo, i)
     info = me.getValue(entry)
     return info
+
+def darNumeroDuracionMaxima(catalogo):
+
+    info_duracion = catalogo['duracion_segundos']
+    max_key = om.maxKey(info_duracion)
+    entry = om.get(catalogo['duracion_segundos'], max_key)
+    max = me.getValue(entry)
+    return lt.size(max), max_key
+
+def darNumeroFechaAntigua(catalogo):
+    info_fecha = catalogo['fechas']
+    max_key = om.minKey(info_fecha)
+    entry = om.get(catalogo['fechas'], max_key)
+    max = me.getValue(entry)
+    return lt.size(max), max_key
+
+def darRangoLatitudes(lista_datos, lat_min, lat_max):
+    lista = lt.newList(datastructure='ARRAY_LIST')
+    for i in lt.iterator(lista_datos):
+        lat = i['latitud']
+        if lat < lat_max and lat > lat_min:
+            lt.addLast(lista, i)
+    return lista
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -210,15 +267,58 @@ def cmpFechaAvistamiento(fecha1, fecha2):
     else:
         return False
     
-    
+def cmpLatitud(latitud1, latitud2):
+
+    l1 = latitud1['latitud']
+    l2 = latitud2['latitud']
+
+    if l1 < l2:
+        return True
+    else:
+        return False
+
 def cmpFechaAvistamientoPrueba(fecha1, fecha2):
     
     if fecha1 < fecha2:
         return True
     else:
         return False
+
+def cmpDuracionCiudadPais(c1,c2):
+    d1 = float(c1['duracion_segundos'])
+    d2 = float(c2['duracion_segundos'])
+
+    ciudad1 = c1['ciudad']
+    ciudad2 = c2['ciudad']
+
+    pais1 = c1['pais']
+    pais2 = c2['pais']
+
+    if d1 < d2:
+        return True
+    elif d1 == d2:
+        if ciudad1 < ciudad2:
+            return True
+        elif ciudad1 == ciudad2:
+            if pais1 < pais2:
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+
     
-    
+def cmpDuracionSegundos(duracion1,duracion2):
+
+    duracion11 = int(duracion1['duracion_segundos'])
+    duracion22 = int(duracion2['duracion_segundos'])
+
+    if duracion11 < duracion22:
+         return True
+    else:
+        return False
     
 def cmpNumAvistamiento(av1, av2):
     
@@ -261,6 +361,12 @@ def insertion(datos, identificador):
         lista_ordenada = ist.sort(datos, cmpNumAvistamiento)
     elif identificador == 3:
         lista_ordenada = ist.sort(datos, cmpHoraAvistamiento)
+    elif identificador == 4:
+        lista_ordenada = ist.sort(datos, cmpDuracionSegundos)
+    elif identificador == 5:
+        lista_ordenada = ist.sort(datos, cmpDuracionCiudadPais)
+    elif identificador == 6:
+        lista_ordenada = ist.sort(datos, cmpLatitud)
     
     return lista_ordenada
 
@@ -272,6 +378,12 @@ def shell(datos, identificador):
         lista_ordenada = sst.sort(datos, cmpNumAvistamiento)
     elif identificador == 3:
         lista_ordenada = sst.sort(datos, cmpHoraAvistamiento)
+    elif identificador == 4:
+        lista_ordenada = sst.sort(datos, cmpDuracionSegundos)
+    elif identificador == 5:
+        lista_ordenada = sst.sort(datos, cmpDuracionCiudadPais)
+    elif identificador == 6:
+        lista_ordenada = sst.sort(datos, cmpLatitud)
     
     return lista_ordenada
 
@@ -283,7 +395,12 @@ def merge(datos, identificador):
         lista_ordenada = mst.sort(datos, cmpNumAvistamiento)
     elif identificador == 3:
         lista_ordenada = mst.sort(datos, cmpHoraAvistamiento)
-        
+    elif identificador == 4:
+        lista_ordenada = mst.sort(datos, cmpDuracionSegundos)
+    elif identificador == 5:
+        lista_ordenada = mst.sort(datos, cmpDuracionCiudadPais)
+    elif identificador == 6:
+        lista_ordenada = mst.sort(datos, cmpLatitud)
     
     return lista_ordenada
 
@@ -295,5 +412,11 @@ def quicksort(datos, identificador):
         lista_ordenada = qst.sort(datos, cmpNumAvistamiento)
     elif identificador == 3:
         lista_ordenada = qst.sort(datos, cmpHoraAvistamiento)
+    elif identificador == 4:
+        lista_ordenada = qst.sort(datos, cmpDuracionSegundos)
+    elif identificador == 5:
+        lista_ordenada = qst.sort(datos, cmpDuracionCiudadPais)
+    elif identificador == 6:
+        lista_ordenada = qst.sort(datos, cmpLatitud)
 
     return lista_ordenada

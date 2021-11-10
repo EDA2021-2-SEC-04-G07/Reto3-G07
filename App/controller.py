@@ -91,3 +91,12 @@ def infoMap(catalogo, i):
 
 def infoPrimerElemento(primerElemento):
     return model.infoPrimerElemento(primerElemento)
+
+def llamarDarNumeroDuracionMaxima(catalogo):
+    return model.darNumeroDuracionMaxima(catalogo)
+
+def llamarDarNumeroFechaAntigua(catalogo):
+    return model.darNumeroFechaAntigua(catalogo)
+
+def llamarDarRangoLatitudes(lista, lat_min, lat_max):
+    return model.darRangoLatitudes(lista, lat_min, lat_max)
