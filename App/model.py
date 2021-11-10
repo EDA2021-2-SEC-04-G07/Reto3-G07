@@ -254,6 +254,9 @@ def darRangoLatitudes(lista_datos, lat_min, lat_max):
             lt.addLast(lista, i)
     return lista
 
+def obtenerMax(catalogo):
+    return om.maxKey(catalogo)
+
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 

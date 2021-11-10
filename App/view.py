@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
-
+import folium
 import config as cf
 import sys
 import controller
@@ -143,7 +143,10 @@ while True:
     elif int(inputs[0]) == 4:
         
         hora_inicial = input('Digite la hora inicial: ')
-        hora_final = input('Digite la hora final: ')
+        hora_final_1 = input('Digite la hora final: ')
+        hora_final_siguiente = hora_final_1.split(':')
+        hora_final_siguiente[1] = str(int(hora_final_siguiente[1]) + 1)
+        hora_final = hora_final_siguiente[0] + ':' + hora_final_siguiente[1]
         
         rango_horas = controller.rangoLLaves(catalogo['avistamientos_por_hora'], hora_inicial, hora_final)
         info_horas = lt.newList(datastructure='ARRAY_LIST')
@@ -157,14 +160,15 @@ while True:
         info_hora_ordenada = controller.llamarMerge(info_horas, identificador=3)
         primeros3 = lt.subList(info_hora_ordenada, 1, 3)
         ultimos3 = lt.subList(info_hora_ordenada, lt.size(info_hora_ordenada)-2, 3)
-        primerElemento = lt.lastElement(ultimos3)
-        info_primer_elemento = controller.infoMap(catalogo['avistamientos_por_hora'], primerElemento['tiempo_hora'])
+        primerElemento = controller.obtenerMax(catalogo['avistamientos_por_hora'])
+        #primerElemento = lt.lastElement(ultimos3)
+        info_primer_elemento = controller.infoMap(catalogo['avistamientos_por_hora'], primerElemento)
          
         print('Existen {} avistamientos con diferentes tiempos\n'.format(controller.elementosArbol(catalogo['avistamientos_por_hora'])))
         print('El avistamiento más tardío es: \n')
         print('    Hora    |    Cantidad    \n')
-        print('{}     {}\n'.format(primerElemento['tiempo_hora'], lt.size(info_primer_elemento)))
-        print('Existen {} avistamientos entre {} y {} \n'.format(lt.size(info_horas), hora_inicial, hora_final))
+        print('{}     {}\n'.format(primerElemento, lt.size(info_primer_elemento)))
+        print('Existen {} avistamientos entre {} y {} \n'.format(lt.size(info_horas), hora_inicial, hora_final_1))
         print('    Fecha y hora    |    Hora    |    Ciudad    |    Estado    |    País    |    Forma    |    Duración    ')
         print('===========================================================================================================')
         
@@ -245,8 +249,72 @@ while True:
 
     
     elif int(inputs[0]) == 7:
-        pass
+        
+        lon_min = input('Digite la longitud minima: ')
+        lon_max = input('Digite la longitud maxima: ')
+        lat_min = input('Digite la latitud minima: ')
+        lat_max = input('Digite la latitud maxima: ')
+        
+        rango_longitudes = controller.rangoLLaves(catalogo['longitud'], float(lon_min), float(lon_max))
+        info_longitudes = lt.newList(datastructure='ARRAY_LIST')
+        
+        for i in lt.iterator(rango_longitudes):
+            info = controller.infoMap(catalogo['longitud'], i)
+            
+            for j in lt.iterator(info):
+                lt.addLast(info_longitudes, j)
+        
+        info_longitudes_rango = controller.llamarDarRangoLatitudes(info_longitudes, float(lat_min), float(lat_max))
+        info_longitudes_ordenada = controller.llamarMerge(info_longitudes_rango, identificador=6)
+        primeros5 = lt.subList(info_longitudes_ordenada, 1, 5)
+        ultimos5 = lt.subList(info_longitudes_ordenada, lt.size(info_longitudes_ordenada)-4, 5)
 
+        print(f'Existen {lt.size(info_longitudes_ordenada)} avistamientos en esa área')
+        print('\n Los primeros 5 son: ')        
+        print('    Fecha y hora    |    Ciudad    |    Estado    |    País    |    Forma    |    Duración    |    Latitud    |    Longitud    ')
+        print('===========================================================================================================')
+        
+        for i in lt.iterator(primeros5):
+            print('{}    {}    {}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos'], i['latitud'], i['longitud']))
+
+        print('\n Los últimos 5 son: ')
+        print('    Fecha y hora    |    Ciudad    |    Estado    |    País    |    Forma    |    Duración    |    Latitud    |    Longitud    ')
+        print('===========================================================================================================')
+            
+        for i in lt.iterator(ultimos5):
+            print('{}    {}    {}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos'], i['latitud'], i['longitud']))
+        
+        
+        lon_max = round(float(lon_max),2)
+        lon_min = round(float(lon_min),2)
+        lat_max = round(float(lat_max),2)
+        lat_min = round(float(lat_min),2)
+                   
+        if  lon_max < 0 and lon_min < 0:
+            longitud_map = (lon_max + lon_min)/2
+            
+        elif lon_max > 0 and lon_min > 0:
+            longitud_map = (lon_max + lon_min)/2
+            
+        if  lat_max < 0 and lat_min < 0:
+            latitud_map = (lat_max + lat_min)/2
+        
+        elif lat_max > 0 and lat_min > 0:
+            latitud_map = (lat_max + lat_min)/2
+            
+            
+        mapa = folium.Map(location=[latitud_map, longitud_map], zoom_start=6)
+        
+        for i in lt.iterator(primeros5):
+            folium.Marker([i['latitud'], i['longitud']]).add_to(mapa)
+            
+        for j in lt.iterator(ultimos5):
+            folium.Marker([j['latitud'], j['longitud']]).add_to(mapa)
+        
+
+        mapa.save('c:/Users/santi/OneDrive/Escritorio/Repositorios/Reto3-G07/Docs/mapa.html')
+        
+        
     else:
         sys.exit(0)
 sys.exit(0)

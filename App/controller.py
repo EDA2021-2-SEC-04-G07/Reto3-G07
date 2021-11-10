@@ -89,6 +89,10 @@ def infoMap(catalogo, i):
     return model.infoMap(catalogo, i)
 
 
+def obtenerMax(catalogo):
+    return model.obtenerMax(catalogo)
+
+
 def infoPrimerElemento(primerElemento):
     return model.infoPrimerElemento(primerElemento)
 
