@@ -28,6 +28,7 @@ from DISClib.ADT import map as mp
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from datetime import date, time, datetime
+import time
 assert cf
 
 
@@ -55,7 +56,7 @@ def cargarDatos(catalogo, datos):
     controller.cargarDatos(catalogo, datos)
     
 
-archivo_datos = 'UFOS-utf8-small.csv'
+archivo_datos = 'UFOS-utf8-80pct.csv'
 
 """
 Menu principal
@@ -88,18 +89,11 @@ while True:
         cantidad_ciudades = controller.elementosArbol(catalogo['ciudades'])
         avistamientos_ciudad_ordenados = controller.llamarMerge(catalogo['avistamientos'], identificador = 2)
         ciudad_mayor = lt.firstElement(avistamientos_ciudad_ordenados)
-        #top_5_avistamientos = lt.subList(avistamientos_ciudad_ordenados, 1, 5)
         print('=====================================\n')
         print('Existen {} ciudades diferentes con avistamientos\n'.format(cantidad_ciudades))
         print('La ciudad con más avistamientos es: \n')
         print('    Ciudad    |    Número de avistamientos\n')
-        print('{}     {}'.format(ciudad_mayor['ciudad'], ciudad_mayor['num_avistamientos']))
-        #print('El top 5 de ciudades con más avistamientos es: \n')
-        #print('   Ciudad    |    Número de avistamientos\n')
-        
-        #for i in lt.iterator(top_5_avistamientos):
-            #print('  {}            {}'.format(i['ciudad'], i['num_avistamientos']))
-        
+        print('{}     {}'.format(ciudad_mayor['ciudad'], ciudad_mayor['num_avistamientos']))        
         print('==================================================\n')
         print('Hay {} avistamientos en la ciudad: {}'.format(lt.size(info_ciudad_ordenada), ciudad))
         print('Los primeros y los últimos 3 avistamientos en la ciudad son: \n')
@@ -112,6 +106,7 @@ while True:
                     
     
     elif int(inputs[0]) == 3:
+        ti = time.process_time()
         num_max = controller.llamarDarNumeroDuracionMaxima(catalogo)
         print(f'El número de avistamientos con el tiempo máximo de {num_max[1]} segundos es de: {num_max[0]}')
         print('==================================================\n')
@@ -139,6 +134,9 @@ while True:
             
         for i in lt.iterator(ultimos3):
             print('{}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['tiempo_hora'], i['ciudad'], i['pais'], i['forma'], i['duracion_segundos']))
+        tf = time.process_time()
+        print(f'El tiempo de ejecución fue de: {(tf-ti)*100} ms')
+
 
     elif int(inputs[0]) == 4:
         
@@ -176,6 +174,7 @@ while True:
             
             
     elif int(inputs[0]) == 5:
+        ti = time.process_time()
         fecha_antigua = controller.llamarDarNumeroFechaAntigua(catalogo)
         print(f'El Número de avistamientos en la fecha más antigua {fecha_antigua[1]} es de: {fecha_antigua[0]}')
 
@@ -204,11 +203,12 @@ while True:
             
         for i in lt.iterator(ultimos3):
             print('{}    {}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['tiempo'].split()[0], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos']))
-
+        tf = time.process_time()
+        print(f'El tiempo de ejecución fue de: {(tf-ti)*100} ms')
 
 
     elif int(inputs[0]) == 6:
-        
+        ti = time.process_time()
         lon_min = input('Digite la longitud minima: ')
         lon_max = input('Digite la longitud maxima: ')
         lat_min = input('Digite la latitud minima: ')
@@ -242,7 +242,8 @@ while True:
             
         for i in lt.iterator(ultimos5):
             print('{}    {}    {}    {}    {}    {}    {}    {}'.format(i['tiempo'], i['ciudad'], i['estado'], i['pais'], i['forma'], i['duracion_segundos'], i['latitud'], i['longitud']))
-
+        tf = time.process_time()
+        print(f'El tiempo de ejecución fue de: {(tf-ti)*100} ms')
     
     elif int(inputs[0]) == 7:
         pass
